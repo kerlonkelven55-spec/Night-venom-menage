@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="pt-BR"><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Night Venom Manager</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+  <style>
+        body { font-family: 'Rajdhani', sans-serif; }
+        :root { --gold: #D4AF37; --gold-bright: #FFD700; --dark: #0B0B0B; --dark2: #141414; --dark3: #1a1a1a; }
+        .gold-glow { box-shadow: 0 0 15px rgba(212,175,55,0.3); }
+        .gold-border { border: 1px solid rgba(212,175,55,0.3); }
+        .tab-active { color: var(--gold-bright); border-top: 2px solid var(--gold-bright); }
+        .card { background: var(--dark2); border: 1px solid rgba(212,175,55,0.15); border-radius: 12px; }
+        .btn-gold { background: linear-gradient(135deg, #D4AF37, #FFD700); color: #0B0B0B; font-weight: 700; border-radius: 8px; padding: 10px 20px; }
+        .btn-gold:hover { opacity: 0.9; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+        .fade-in { animation: fadeIn 0.3s ease; }
+        .screen { display: none; }
+        .screen.active { display: block; }
+        input, select { background: #1a1a1a; border: 1px solid rgba(212,175,55,0.2); color: #fff; border-radius: 8px; padding: 10px 14px; width: 100%; }
+        input:focus, select:focus { outline: none; border-color: var(--gold); }
+        .member-row { background: var(--dark3); border: 1px solid rgba(212,175,55,0.1); border-radius: 8px; padding: 12px; margin-bottom: 8px; }
+    </style>
+  <script src="/_sdk/resizing_sdk.js" type="text/javascript"></script>
+ <script src="/_sdk/telemetry_sdk.js"></script></head>
+ <body data-template-id="__page-root" class="min-h-screen text-white overflow-x-hidden" style="background:#0B0B0B">
+  <div class="w-full max-w-md mx-auto relative" style="min-height:calc(100 * min(var(--vh,1vh),1vh))"><!-- Header -->
+   <header class="flex items-center justify-between p-4">
+    <div class="flex items-center gap-3"><img data-template-id="guild-logo" class="canva-image w-12 h-12 rounded-full object-cover gold-glow" loading="lazy" src="canva://MAHLvaYHYmE/1" alt="Night Venom guild logo with golden reaper">
+     <div>
+      <h1 data-template-id="guild-name" class="canva-text text-lg font-bold" style="color: rgb(255, 215, 0); font-weight: 700; font-style: normal; font-size: 32px;">NIGHT VENOM</h1>
+      <p data-template-id="guild-subtitle" class="canva-text text-xs" style="color: rgb(136, 136, 136); font-weight: 500; font-style: normal; font-size: 16px;">Organização Competitiva • Since 2025</p>
+     </div>
+    </div><span id="member-count-badge" class="text-xs px-2 py-1 rounded-full" style="background:rgba(212,175,55,0.15);color:#D4AF37">0 membros</span>
+   </header><!-- Screens -->
+   <main class="px-4 pb-24"><!-- Dashboard -->
+    <section id="screen-dashboard" class="screen active fade-in">
+     <div class="grid grid-cols-2 gap-3 mb-4">
+      <div class="card p-4 text-center"><i data-lucide="users" style="color:#D4AF37" class="mx-auto mb-1"></i>
+       <p class="text-2xl font-bold" style="color:#FFD700" id="dash-members">0</p>
+       <p data-template-id="dash-members-label" class="canva-text text-xs" style="color: rgb(136, 136, 136); font-weight: 500; font-style: normal; font-size: 16px;">Membros</p>
+      </div>
+      <div class="card p-4 text-center"><i data-lucide="swords" style="color:#D4AF37" class="mx-auto mb-1"></i>
+       <p class="text-2xl font-bold" style="color:#FFD700" id="dash-gg">0</p>
+       <p data-template-id="dash-gg-label" class="canva-text text-xs" style="color: rgb(136, 136, 136); font-weight: 500; font-style: normal; font-size: 16px;">GG Totais</p>
+      </div>
+      <div class="card p-4 text-center"><i data-lucide="trophy" style="color:#D4AF37" class="mx-auto mb-1"></i>
+       <p class="text-2xl font-bold" style="color:#FFD700" id="dash-mvp">-</p>
+       <p data-template-id="dash-mvp-label" class="canva-text text-xs" style="color: rgb(136, 136, 136); font-weight: 500; font-style: normal; font-size: 16px;">MVP da Guilda</p>
+      </div>
+      <div class="card p-4 text-center"><i data-lucide="wallet" style="color:#D4AF37" class="mx-auto mb-1"></i>
+       <p class="text-2xl font-bold" style="color:#FFD700" id="dash-points">0</p>
+       <p data-template-id="dash-points-label" class="canva-text text-xs" style="color: rgb(136, 136, 136); font-weight: 500; font-style: normal; font-size: 16px;">Pontos Totais</p>
+      </div>
+     </div>
+     <div class="card p-4 mb-3">
+      <h3 data-template-id="dash-ranking-title" class="canva-text font-bold mb-3" style="color: rgb(212, 175, 55); font-weight: 700; font-style: normal; font-size: 19px;">🏆 Top Ranking</h3>
+      <div id="dash-top3" class="space-y-2"></div>
+     </div>
+    </section><!-- Membros -->
+    <section id="screen-membros" class="screen fade-in">
+     <div class="flex justify-between items-center mb-4">
+      <h2 data-template-id="membros-title" class="canva-text text-xl font-bold" style="color: rgb(255, 215, 0); font-weight: 700; font-style: normal; font-size: 24px;">Gestão de Membros</h2><button class="btn-gold text-sm" onclick="showAddMember()"><i data-lucide="plus" class="inline w-4 h-4"></i> Novo</button>
+     </div>
+     <div id="add-member-form" class="card p-4 mb-4 hidden">
+      <div class="space-y-3"><input id="inp-nick" type="text" placeholder="Nick"> <input id="inp-ffid" type="text" placeholder="ID Free Fire"> <select id="inp-cargo"><option value="Membro">Membro</option><option value="Elite">Elite</option><option value="Veterano">Veterano</option><option value="Capitão">Capitão</option><option value="Sub-Líder">Sub-Líder</option></select> <input id="inp-squad" type="text" placeholder="Squad">
+       <div class="flex gap-2"><button class="btn-gold flex-1 text-sm" onclick="saveMember()">Salvar</button> <button class="flex-1 text-sm px-4 py-2 rounded-lg" style="background:#333;color:#fff" onclick="hideAddMember()">Cancelar</button>
+       </div>
+      </div>
+     </div>
+     <div id="members-list"></div>
+     <p id="members-empty" class="text-center py-8" style="color:#555">Nenhum membro cadastrado</p>
+    </section><!-- Pontos -->
+    <section id="screen-pontos" class="screen fade-in">
+     <h2 data-template-id="pontos-title" class="canva-text text-xl font-bold mb-4" style="color: rgb(255, 215, 0); font-weight: 700; font-style: normal; font-size: 24px;">Sistema de Pontuação</h2>
+     <div class="card p-4 mb-4"><select id="pts-member" class="mb-3"><option value="">Selecione o membro</option></select>
+      <div class="grid grid-cols-2 gap-2"><button class="btn-gold text-sm" onclick="addPoints('gg')">GG +10</button> <button class="btn-gold text-sm" onclick="addPoints('xt')">XT +5</button> <button class="btn-gold text-sm" onclick="addPoints('recruit')">Recruta +20</button> <button class="btn-gold text-sm" onclick="addPoints('camp')">Camp +50</button>
+      </div>
+     </div>
+     <div id="pts-log" class="space-y-2"></div>
+    </section><!-- Ranking -->
+    <section id="screen-ranking" class="screen fade-in">
+     <h2 data-template-id="ranking-title" class="canva-text text-xl font-bold mb-4" style="color: rgb(255, 215, 0); font-weight: 700; font-style: normal; font-size: 24px;">Ranking da Guilda</h2>
+     <div id="ranking-list" class="space-y-2"></div>
+    </section><!-- Guerra -->
+    <section id="screen-guerra" class="screen fade-in">
+     <h2 data-template-id="guerra-title" class="canva-text text-xl font-bold mb-4" style="color: rgb(255, 215, 0); font-weight: 700; font-style: normal; font-size: 24px;">Guerra de Guilda</h2>
+     <p data-template-id="guerra-desc" class="canva-text text-sm mb-4" style="color: rgb(136, 136, 136); font-weight: 500; font-style: normal; font-size: 16px;">Controle de presença e formação dos squads</p>
+     <div id="guerra-list" class="space-y-2"></div>
+    </section><!-- Admin -->
+    <section id="screen-admin" class="screen fade-in">
+     <h2 data-template-id="admin-title" class="canva-text text-xl font-bold mb-4" style="color: rgb(255, 215, 0); font-weight: 700; font-style: normal; font-size: 24px;">Painel Administrativo</h2>
+     <div id="admin-list" class="space-y-2"></div>
+    </section>
+   </main><!-- Bottom Nav -->
+   <nav class="fixed bottom-0 left-0 right-0 flex justify-around items-center py-2 px-1 z-50" style="background:#0B0B0B;border-top:1px solid rgba(212,175,55,0.2);max-width:448px;margin:0 auto"><button class="nav-tab tab-active flex flex-col items-center p-2 text-xs" onclick="switchTab('dashboard')"><i data-lucide="layout-dashboard" class="w-5 h-5"></i>Home</button> <button class="nav-tab flex flex-col items-center p-2 text-xs" style="color:#666" onclick="switchTab('membros')"><i data-lucide="users" class="w-5 h-5"></i>Membros</button> <button class="nav-tab flex flex-col items-center p-2 text-xs" style="color:#666" onclick="switchTab('pontos')"><i data-lucide="star" class="w-5 h-5"></i>Pontos</button> <button class="nav-tab flex flex-col items-center p-2 text-xs" style="color:#666" onclick="switchTab('ranking')"><i data-lucide="trophy" class="w-5 h-5"></i>Ranking</button> <button class="nav-tab flex flex-col items-center p-2 text-xs" style="color:#666" onclick="switchTab('guerra')"><i data-lucide="swords" class="w-5 h-5"></i>Guerra</button> <button class="nav-tab flex flex-col items-center p-2 text-xs" style="color:#666" onclick="switchTab('admin')"><i data-lucide="shield" class="w-5 h-5"></i>Admin</button>
+   </nav>
+  </div>
+  <div id="toast" class="fixed top-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-lg text-sm font-bold hidden z-50" style="background:#D4AF37;color:#0B0B0B"></div>
+  <script src="/_sdk/editing_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <script>
+let members = [];
+
+const dataHandler = {
+    onDataChanged(data) {
+        members = data;
+        renderAll();
+    }
+};
+
+async function initApp() {
+    const r = await window.dataSdk.init(dataHandler);
+    if (!r.isOk) showToast('Erro ao conectar dados');
+    lucide.createIcons();
+}
+
+function renderAll() {
+    document.getElementById('member-count-badge').textContent = members.length + ' membros';
+    document.getElementById('dash-members').textContent = members.length;
+    const totalGG = members.reduce((s,m) => s + (m.gg_participadas||0), 0);
+    document.getElementById('dash-gg').textContent = totalGG;
+    const totalPts = members.reduce((s,m) => s + (m.pontos||0), 0);
+    document.getElementById('dash-points').textContent = totalPts;
+    const sorted = [...members].sort((a,b) => (b.pontos||0) - (a.pontos||0));
+    const mvp = sorted[0];
+    document.getElementById('dash-mvp').textContent = mvp ? mvp.nick : '-';
+
+    // Top 3
+    const top3El = document.getElementById('dash-top3');
+    top3El.innerHTML = sorted.slice(0,3).map((m,i) => `<div class="flex justify-between items-center member-row"><span style="color:#FFD700">#${i+1}</span><span class="font-bold">${m.nick}</span><span style="color:#D4AF37">${m.pontos||0} pts</span></div>`).join('');
+
+    // Members list
+    const ml = document.getElementById('members-list');
+    const empty = document.getElementById('members-empty');
+    if (members.length === 0) { ml.innerHTML = ''; empty.classList.remove('hidden'); }
+    else {
+        empty.classList.add('hidden');
+        ml.innerHTML = members.map(m => `<div class="member-row flex justify-between items-center"><div><span class="font-bold" style="color:#FFD700">${m.nick}</span><span class="text-xs ml-2" style="color:#888">${m.cargo||'Membro'}</span></div><span class="text-xs" style="color:#D4AF37">${m.pontos||0} pts</span></div>`).join('');
+    }
+
+    // Points member select
+    const sel = document.getElementById('pts-member');
+    const val = sel.value;
+    sel.innerHTML = '<option value="">Selecione o membro</option>' + members.map(m => `<option value="${m.__backendId}">${m.nick}</option>`).join('');
+    sel.value = val;
+
+    // Ranking
+    document.getElementById('ranking-list').innerHTML = sorted.map((m,i) => {
+        const medal = i===0?'🥇':i===1?'🥈':i===2?'🥉':`#${i+1}`;
+        return `<div class="member-row flex justify-between items-center"><span>${medal} <strong>${m.nick}</strong></span><span style="color:#FFD700">${m.pontos||0} pts</span></div>`;
+    }).join('');
+
+    // Guerra
+    document.getElementById('guerra-list').innerHTML = members.map(m => `<div class="member-row flex justify-between items-center"><span>${m.nick}</span><span class="text-xs" style="color:#888">${m.squad||'Sem squad'}</span></div>`).join('');
+
+    // Admin
+    document.getElementById('admin-list').innerHTML = members.map(m => `<div class="member-row flex justify-between items-center"><div><strong style="color:#FFD700">${m.nick}</strong><span class="text-xs ml-2" style="color:#888">Adv: ${m.advertencias||0}</span></div><div class="flex gap-2"><button class="text-xs px-2 py-1 rounded" style="background:rgba(212,175,55,0.2);color:#D4AF37" onclick="warn('${m.__backendId}')">+Adv</button><button class="text-xs px-2 py-1 rounded" style="background:rgba(255,0,0,0.2);color:#f55" onclick="removeMember('${m.__backendId}')">Remover</button></div></div>`).join('');
+}
+
+function switchTab(name) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + name).classList.add('active');
+    document.querySelectorAll('.nav-tab').forEach(t => { t.classList.remove('tab-active'); t.style.color = '#666'; });
+    event.currentTarget.classList.add('tab-active');
+    event.currentTarget.style.color = '';
+}
+
+function showAddMember() { document.getElementById('add-member-form').classList.remove('hidden'); }
+function hideAddMember() { document.getElementById('add-member-form').classList.add('hidden'); }
+
+async function saveMember() {
+    const nick = document.getElementById('inp-nick').value.trim();
+    if (!nick) { showToast('Preencha o nick'); return; }
+    if (members.length >= 999) { showToast('Limite de 999 membros atingido!'); return; }
+    const r = await window.dataSdk.create({
+        nick, ff_id: document.getElementById('inp-ffid').value.trim(),
+        cargo: document.getElementById('inp-cargo').value, squad: document.getElementById('inp-squad').value.trim(),
+        data_entrada: new Date().toISOString(), whatsapp:'', status:'Ativo',
+        pontos:0, gg_participadas:0, xt_participados:0, camps_jogados:0, membros_indicados:0, advertencias:0, nivel:'Bronze'
+    });
+    if (r.isOk) { showToast('Membro adicionado!'); hideAddMember(); ['inp-nick','inp-ffid','inp-squad'].forEach(id=>document.getElementById(id).value=''); }
+    else showToast('Erro ao salvar');
+}
+
+async function addPoints(type) {
+    const id = document.getElementById('pts-member').value;
+    if (!id) { showToast('Selecione um membro'); return; }
+    const m = members.find(x => x.__backendId === id);
+    if (!m) return;
+    const pts = {gg:10,xt:5,recruit:20,camp:50}[type];
+    const updated = {...m, pontos:(m.pontos||0)+pts};
+    if (type==='gg') updated.gg_participadas = (m.gg_participadas||0)+1;
+    if (type==='xt') updated.xt_participados = (m.xt_participados||0)+1;
+    if (type==='camp') updated.camps_jogados = (m.camps_jogados||0)+1;
+    if (type==='recruit') updated.membros_indicados = (m.membros_indicados||0)+1;
+    const r = await window.dataSdk.update(updated);
+    if (r.isOk) showToast(`+${pts} pts para ${m.nick}`);
+    else showToast('Erro');
+}
+
+async function warn(id) {
+    const m = members.find(x => x.__backendId === id);
+    if (!m) return;
+    const r = await window.dataSdk.update({...m, advertencias:(m.advertencias||0)+1});
+    if (r.isOk) showToast('Advertência aplicada');
+}
+
+async function removeMember(id) {
+    const m = members.find(x => x.__backendId === id);
+    if (!m) return;
+    const r = await window.dataSdk.delete(m);
+    if (r.isOk) showToast('Membro removido');
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.remove('hidden');
+    setTimeout(() => t.classList.add('hidden'), 2500);
+}
+
+initApp();
+</script>
+ <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a072442abd56b491',t:'MTc4MDY5NDg5OA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+</body></html>
